@@ -100,18 +100,19 @@
              [:div.message @msg]))]])]]])
 
 (defn menu-section []
-  (let [eth-inj? @(<su [::subs/ethereum-injected?])
-        address @(<su [::subs/web3-account-connected])]
-    (when eth-inj?
+  (let [address (<su [::subs/web3-account-connected])]
+    (fn []
       [:div#menu
        [:ul
         [:li.connect
-         [:a {:href "#" :on-click #(>ev [::events/web3-connect])}
-          (or address  "CONNECT")]]
+         [:a {:href "#" :on-click (if @address 
+                                    #(>ev [::events/web3-disconnect])
+                                    #(>ev [::events/web3-connect]))}
+          (or @address  "CONNECT")]]
         [:li.add-token
          [:a {:on-click #(>ev [::events/web3-add-token])} "ADD TOKEN"]]]])))
 
-(defn install-ethereum-compatible-wallet []
+#_ (defn install-ethereum-compatible-wallet []
   (let [eth-inj? @(<su [::subs/ethereum-injected?])]
     (when-not eth-inj?
       [:div#install-ethereum-compatible-wallet
@@ -208,8 +209,8 @@
 
 (defn app-content []
   [:div.app-content
-   ;; informational messages
-   [install-ethereum-compatible-wallet]
+    ;; informational messages
+   #_[install-ethereum-compatible-wallet]
    [flash-message]
 
    [menu-section]
