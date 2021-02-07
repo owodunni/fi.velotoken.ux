@@ -20,7 +20,6 @@
     (js/clearInterval interval-id)
     (swap! registered-keys dissoc id)))
 
-
 (reg-fx
  :dispatch-interval
  register-interval)
@@ -29,8 +28,6 @@
         (fn [intervals]
           (doseq [i intervals]
             (register-interval i))))
-
-  
 
 (reg-fx
  :clear-interval

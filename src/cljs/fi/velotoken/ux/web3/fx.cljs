@@ -25,10 +25,10 @@
 (defmethod web3-method :connect []
   (go
     ;; NOTE: when not using exists? we get an not defined error
-    (let [pvdr 
+    (let [pvdr
           (u/try-flash! :error "Problem connecting"
                         (<? (connect)))]
-      (if-not pvdr 
+      (if-not pvdr
         (dispatch [::events/web3-ethereum-not-present])
         (do
           ;; register events of interest

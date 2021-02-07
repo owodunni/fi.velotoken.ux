@@ -192,7 +192,7 @@
  ::web3-disconnected
  (fn [{:keys [db]} _]
    {:db (assoc db :accounts [])
-    :clear-interval-multiple 
+    :clear-interval-multiple
     [{:id :velo-rebase-data}]}))
 
 (re-frame/reg-event-db

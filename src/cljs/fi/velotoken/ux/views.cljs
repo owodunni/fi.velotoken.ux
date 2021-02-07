@@ -105,19 +105,19 @@
       [:div#menu
        [:ul
         [:li.connect
-         [:a {:href "#" :on-click (if @address 
+         [:a {:href "#" :on-click (if @address
                                     #(>ev [::events/web3-disconnect])
                                     #(>ev [::events/web3-connect]))}
           (or @address  "CONNECT")]]
         [:li.add-token
          [:a {:on-click #(>ev [::events/web3-add-token])} "ADD TOKEN"]]]])))
 
-#_ (defn install-ethereum-compatible-wallet []
-  (let [eth-inj? @(<su [::subs/ethereum-injected?])]
-    (when-not eth-inj?
-      [:div#install-ethereum-compatible-wallet
-       [:span
-        "Install an ETH compatible wallet like MetaMask"]])))
+#_(defn install-ethereum-compatible-wallet []
+    (let [eth-inj? @(<su [::subs/ethereum-injected?])]
+      (when-not eth-inj?
+        [:div#install-ethereum-compatible-wallet
+         [:span
+          "Install an ETH compatible wallet like MetaMask"]])))
 
 (defn flash-message []
   (let [{:keys [message error type]} @(<su [::subs/flash-message])]
