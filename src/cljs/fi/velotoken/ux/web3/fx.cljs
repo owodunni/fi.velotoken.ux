@@ -31,15 +31,6 @@
       (if-not pvdr
         (dispatch [::events/web3-ethereum-not-present])
         (do
-          ;; register events of interest
-          (.on pvdr "accountsChanged" (fn [accounts] (dispatch [::events/web3-accounts-changed (js->clj accounts)])))
-          (.on pvdr "chainChanged" (fn [chain-id] (dispatch [::events/web3-chain-changed (js->clj chain-id)])))
-          (.on pvdr "networkChanged" (fn [chain-id] (dispatch [::events/web3-network-changed (js->clj chain-id)])))
-          (.on pvdr "connect" (fn [connect-info] (dispatch [::events/web3-connected (js->clj connect-info)])))
-          ;; RPC Error {:message .., :code .., :data ..}
-          (.on pvdr "disconnect" (fn [rpc-error] (dispatch [::events/web3-disconnect (js->clj rpc-error)])))
-          (.on pvdr "message" (fn [message] (dispatch [::events/web3-message (js->clj message)])))
-
           ;; lets try to get the address of the signer
           ;; if we have none, it means we have no account
           ;; connected. If we have one, metamask is connected
