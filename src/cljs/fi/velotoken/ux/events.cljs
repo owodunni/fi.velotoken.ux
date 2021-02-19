@@ -210,7 +210,10 @@
 
 (re-frame/reg-event-db
  ::web3-chain-changed
- (fn [_ [_ chain-id]]))
+ (fn [db [_ chain-id]]
+   (prn "Switched to chain:" chain-id)
+   (if (not= chain-id "0x1")
+     (flash db :error "Switched from mainnet."))))
 
 (re-frame/reg-event-db
  ::web3-connected

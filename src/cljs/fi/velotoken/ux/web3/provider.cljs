@@ -35,12 +35,11 @@
        (reset! *provider* (<p! (ocall modal :connect)))
 
 
-          ;; register events of interest
+       ;; register events of interest
 
 
        (.on @*provider* "accountsChanged" (fn [accounts] (dispatch [::events/web3-accounts-changed (js->clj accounts)])))
        (.on @*provider* "chainChanged" (fn [chain-id] (dispatch [::events/web3-chain-changed (js->clj chain-id)])))
-       (.on @*provider* "networkChanged" (fn [chain-id] (dispatch [::events/web3-network-changed (js->clj chain-id)])))
        (.on @*provider* "connect" (fn [connect-info] (dispatch [::events/web3-connected (js->clj connect-info)])))
           ;; RPC Error {:message .., :code .., :data ..}
        (.on @*provider* "disconnect" (fn [rpc-error] (dispatch [::events/web3-disconnect (js->clj rpc-error)])))
