@@ -19,6 +19,12 @@
     :options
     {:infuraId "663e21b048c2434bb01f364537fc4706"}}})
 
+(defn create-modal []
+  (Web3Modal. (clj->js {:providerOptions provider-options
+                        :disableInjectedProvider false
+                        :cacheProvider true
+                        :theme "dark"})))
+
 (defn provider []
   (when @*provider*
     (let [web3-provider (. ethers/providers -Web3Provider)]
@@ -26,18 +32,11 @@
 
 (defn connect []
   (go-try
-   (let [modal (Web3Modal.
-                (clj->js {:providerOptions provider-options
-                          :disableInjectedProvider false
-                          :cacheProvider false
-                          :theme "dark"}))]
+   (let [modal (create-modal)]
      (try
        (reset! *provider* (<p! (ocall modal :connect)))
 
-
        ;; register events of interest
-
-
        (.on @*provider* "accountsChanged" (fn [accounts] (dispatch [::events/web3-accounts-changed (js->clj accounts)])))
        (.on @*provider* "chainChanged" (fn [chain-id] (dispatch [::events/web3-chain-changed (js->clj chain-id)])))
        (.on @*provider* "connect" (fn [connect-info] (dispatch [::events/web3-connected (js->clj connect-info)])))
@@ -57,7 +56,11 @@
 (defn disconnect []
   (go-try
    (ocall @*provider* :?disconnect)
+   (.clearCachedProvider (create-modal))
    (reset! *provider* nil)))
+
+(defn cached-provider? []
+  (not= (.-cachedProvider (create-modal)) ""))
 
 #_(prn "BD" (.-cachedProvider (Web3Modal. (clj->js {:providerOptions  provider-options}))))
 #_(connect)

@@ -11,7 +11,7 @@
    [fi.velotoken.ux.events :as events]
    [fi.velotoken.ux.numbers :as numbers]
    [fi.velotoken.ux.web3.bignumber :as bignumber]
-   [fi.velotoken.ux.web3.provider :refer [provider connect disconnect]]
+   [fi.velotoken.ux.web3.provider :refer [provider connect cached-provider? disconnect]]
    [fi.velotoken.ux.web3.contract.rebaser :as rebaser]
    [fi.velotoken.ux.web3.contract.mises-legacy-pool :as mlp-c]
    [fi.velotoken.ux.web3.contract.uniswap-vlo-eth :as uve-c]
@@ -24,23 +24,26 @@
 
 (defmethod web3-method :connect []
   (go
-    ;; NOTE: when not using exists? we get an not defined error
+      ;; NOTE: when not using exists? we get an not defined error
     (let [pvdr
           (u/try-flash! :error "Problem connecting"
                         (<? (connect)))]
       (if-not pvdr
         (dispatch [::events/web3-ethereum-not-present])
         (do
-          ;; lets try to get the address of the signer
-          ;; if we have none, it means we have no account
-          ;; connected. If we have one, metamask is connected
-          ;; and we initialize with that address
+            ;; lets try to get the address of the signer
+            ;; if we have none, it means we have no account
+            ;; connected. If we have one, metamask is connected
+            ;; and we initialize with that address
           (try
             (let [signer (ocall pvdr :getSigner)
                   address (<p! (ocall signer :getAddress))]
               (dispatch [::events/web3-initialized {:accounts [address]}]))
             (catch js/Error _
               (dispatch [::events/web3-initialized {:accounts []}]))))))))
+
+(defmethod web3-method :connect-cached []
+  (if (cached-provider?) (web3-method [:connect])))
 
 (defmethod web3-method :disconnect []
   (go

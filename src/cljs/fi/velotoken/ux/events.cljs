@@ -16,7 +16,7 @@
  (fn [_ _]
    {:db db/default-db
     :dispatch [::coingecko-sync]
-    ;; :web3 [:connect]
+    :web3 [:connect-cached]
     :dispatch-interval-multiple
     [{:dispatch [::flash-update]
       :id :flash-update
